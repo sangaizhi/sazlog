@@ -7,24 +7,34 @@ import qs from 'qs';
 // axios 配置
 
 // http request 拦截器
-axios.interceptors.request.use(
+
+var axiosInstance = axios.create({
+	timeout: 100000,
+	headers: {
+		'Content-Type': 'application/x-www-form-urlencoded'
+	},
+	withCredentials:true,
+	transformRequest: [function(data) {
+		data = qs.stringify(data)
+		return data;
+	}]
+});
+
+
+axiosInstance.interceptors.request.use(
 	config => {
-		
-		config.data = JSON.stringify(config.data);
-		config.headers = {
-			'Content-Type': 'application/x-www-form-urlencoded'
-		};
 		if(store.state.token) {
-			config.headers.Authorization = `token ${store.state.token}`;
+			config.headers.Authorization = `${store.state.token}`;
 		}
 		return config;
 	},
 	err => {
 		return Promise.reject(err);
-	});
+	}
+);
 
 // http response 拦截器
-axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
 	response => {
 		return response;
 	},
@@ -43,22 +53,10 @@ axios.interceptors.response.use(
 			}
 		}
 		return Promise.reject(error.response.data)
-	});
+	}
+);
 
 
-var axiosInstance = axios.create({
-	timeout: 100000,
-	headers: {
-		'Content-Type': 'application/x-www-form-urlencoded'
-	},
-	withCredentials:true,
-	transformRequest: [function(data) {
-		data = qs.stringify(data)
-		return data;
-	}]
-});
-
-axiosInstance.withCredentials=true;
 
 export default axiosInstance;
 

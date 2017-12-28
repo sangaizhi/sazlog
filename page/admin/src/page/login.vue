@@ -13,7 +13,7 @@
 						<label class="">Z-Blsog</label>
 					</el-col>
 					<el-form-item>
-						<el-input v-model="loginUser.account" v-validate="'required|loginUserAccount'" name='loginUserAccount'></el-input>
+						<el-input v-model="loginUser.account" v-validate="'required|loginUserAccount'" name='loginUserAccount' ></el-input>
 						<span v-show="errors.has('loginUserAccount')" class="text-style error-message" v-cloak> {{ errors.first('loginUserAccount') }} </span>
 					</el-form-item>
 					<el-form-item>
@@ -30,14 +30,14 @@
 </template>
 <script>
 	import * as types from '../store/types';
-	import { userLogin } from "../api/api.js";
+	import { userLogin,domain } from "../api/api.js";
 	import { saveUser, saveToken, requestAndSaveUser } from "../util/storage.js";
 	export default {
 		data() {
 			return {
 				loginUser: {
-					account: '',
-					password: ''
+					account: '18566763798',
+					password: '123456'
 				}
 			}
 		},
@@ -56,7 +56,7 @@
 								// 保存 token 到本地
 								self.token = data;
 								self.$store.commit(types.LOGIN, self.token);
-								self.$cookie.set('token', data, {expires: '1h', domain:'localhost'});
+								self.$cookie.set('token', data, {expires: '1h', domain:domain});
 								var tokenParam = {
 									'token': self.token
 								}

@@ -5,8 +5,9 @@ let base = '/blog-admin';
 //let ssoUrl = "http://127.0.0.1:8082/blog-sso";
 //
 //let domainUrl = "http://127.0.0.1:8083/blog-admin";
-let ssoUrl = "http://112.74.41.215/blog-sso";
-let domainUrl = "http://112.74.41.215/blog-admin";
+export const domain = "192.168.1.92";
+let ssoUrl = "http://" + domain + "/blog-sso";
+let domainUrl = "http://" + domain + "/blog-admin";
 
 /**
  * 请求登录 
