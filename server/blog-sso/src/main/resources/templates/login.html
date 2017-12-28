@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>登录</title>
+</head>
+<body>
+    <div>
+        <div>
+            <div class="left">
+                <header>
+                    <a></a>
+                </header>
+                <p>Eric の Blog</p>
+                <div>
+                    <form th:action="@{/login}" method="POST">
+                        <p>
+                            <input type="text" name="account" placeholder="邮箱、手机号"/>
+                        </p>
+                        <p>
+                            <input type="password" name="password" placeholder="密码" />
+                        </p>
+                        <p class="hide"></p>
+                        <p>
+                            <span>
+                                <input type="checkbox" name="remember" id="remember" />
+                                <label for="remember">记住我</label>
+                            </span>
+                            <span>
+                                <a th:href="@{/forgetPassword}">忘记密码</a>
+                            </span>
+                            <span>
+                                <button type="button">登录</button>
+                            </span>
+                        </p>
+                    </form>
+                </div>
+            </div>
+            <div class="right">
+            </div>
+        </div>
+        <div></div>
+    </div>
+</body>
+</html>

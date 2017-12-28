@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.sangaizhi.blog.dao.ArticleDao">
+
+    <resultMap id="ArticleMap" type="org.sangaizhi.blog.entity.vo.ArticleVO">
+        <result property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="userName" column="userName"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="label" column="label"/>
+        <result property="categoryId" column="categoryId"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="star" column="star"/>
+        <result property="createTime" column="createTime"/>
+        <result property="modifyTime" column="modifyTime"/>
+    </resultMap>
+
+    <sql id="columns">
+        <![CDATA[
+
+        	ID as id,
+        	USER_ID as userId,
+        	USER_NAME as userName,
+        	TITLE as title,
+        	SUMMARY as summary,
+        	LABEL as label,
+        	CATEGORY_ID as categoryId,
+        	CATEGORY_NAME as categoryName,
+        	STAR as star,
+        	CREATE_TIME as createTime,
+        	MODIFY_TIME as modifyTime
+
+        ]]>
+    </sql>
+
+    <sql id="where">
+        <where>
+            <if test="@Ognl@isNotEmpty(id)">
+                <![CDATA[ AND ID = #{id} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(userId)">
+                <![CDATA[ AND USER_ID = #{userId} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(userName)">
+                <![CDATA[ AND USER_NAME = #{userName} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(title)">
+                <![CDATA[ AND TITLE = #{title} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(summary)">
+                <![CDATA[ AND SUMMARY = #{summary} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(label)">
+                <![CDATA[ AND LABEL = #{label} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(categoryId)">
+                <![CDATA[ AND CATEGORY_ID = #{categoryId} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(categoryName)">
+                <![CDATA[ AND CATEGORY_NAME = #{categoryName} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(star)">
+                <![CDATA[ AND STAR = #{star} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(createTime)">
+                <![CDATA[ AND CREATE_TIME = #{createTime} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(createTimeBegin)">
+                <![CDATA[ AND CREATE_TIME >= #{createTimeBegin} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(createTimeEnd)">
+                <![CDATA[ AND CREATE_TIME <= #{createTimeEnd} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(modifyTime)">
+                <![CDATA[ AND MODIFY_TIME = #{modifyTime} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(modifyTimeBegin)">
+                <![CDATA[ AND MODIFY_TIME >= #{modifyTimeBegin} ]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(modifyTimeEnd)">
+                <![CDATA[ AND MODIFY_TIME <= #{modifyTimeEnd} ]]>
+            </if>
+        </where>
+    </sql>
+
+    <select id="getById" resultType="org.sangaizhi.blog.entity.vo.ArticleVO">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        t_article
+        <where>
+            ID = #{id}
+        </where>
+    </select>
+
+    <select id="getByCondition" resultType="org.sangaizhi.blog.entity.vo.ArticleVO">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        t_article
+        <include refid="where"/>
+    </select>
+
+    <select id="queryList" resultMap="ArticleMap">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        t_article
+        <include refid="where"/>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT
+        count(1)
+        FROM
+        t_article
+        <include refid="where"/>
+    </select>
+
+    <select id="queryPage" resultMap="ArticleMap">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        t_article
+        <include refid="where"/>
+        <!-- 请手动在{startPosition}和{pageSize}前面加上"#"号并删除本注释 -->
+        LIMIT #{startPosition},#{pageSize}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO t_article (
+	        USER_ID,
+	        USER_NAME,
+	        TITLE,
+	        SUMMARY,
+	        LABEL,
+	        CATEGORY_ID,
+	        CATEGORY_NAME,
+	        STAR,
+	        CREATE_TIME,
+	        MODIFY_TIME
+	    ) VALUES (
+	        #{userId},
+	        #{userName},
+	        #{title},
+	        #{summary},
+	        #{label},
+	        #{categoryId},
+	        #{categoryName},
+	        #{star},
+	        #{createTime},
+	        #{modifyTime}
+	    )
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO t_article (
+        USER_ID,
+        USER_NAME,
+        TITLE,
+        SUMMARY,
+        LABEL,
+        CATEGORY_ID,
+        CATEGORY_NAME,
+        STAR,
+        CREATE_TIME,
+        MODIFY_TIME
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.userId},
+            #{item.userName},
+            #{item.title},
+            #{item.summary},
+            #{item.label},
+            #{item.categoryId},
+            #{item.categoryName},
+            #{item.star},
+            #{item.createTime},
+            #{item.modifyTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateById">
+        UPDATE
+        t_article
+        <set>
+            <if test="userId != null">
+                <![CDATA[ USER_ID = #{userId} ]]>,
+            </if>
+            <if test="userName != null">
+                <![CDATA[ USER_NAME = #{userName} ]]>,
+            </if>
+            <if test="title != null">
+                <![CDATA[ TITLE = #{title} ]]>,
+            </if>
+            <if test="summary != null">
+                <![CDATA[ SUMMARY = #{summary} ]]>,
+            </if>
+            <if test="categoryId != null">
+                <![CDATA[ CATEGORY_ID = #{categoryId} ]]>,
+            </if>
+            <if test="categoryName != null">
+                <![CDATA[ CATEGORY_NAME = #{categoryName} ]]>,
+            </if>
+            <if test="star != null">
+                <![CDATA[ STAR = #{star} ]]>,
+            </if>
+            <if test="label != null">
+                <![CDATA[ label = #{label} ]]>,
+            </if>
+            <if test="createTime != null">
+                <![CDATA[ CREATE_TIME = #{createTime} ]]>,
+            </if>
+            <if test="modifyTime != null">
+                <![CDATA[ MODIFY_TIME = #{modifyTime} ]]>
+            </if>
+        </set>
+        <where>
+            ID = #{id}
+        </where>
+    </update>
+
+    <delete id="deleteById">
+        DELETE
+        FROM
+        t_article
+        <where>
+            ID = #{id}
+        </where>
+    </delete>
+
+    <delete id="deleteBatchByIds">
+        DELETE
+        FROM
+        t_article
+        WHERE
+        ID IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>
+

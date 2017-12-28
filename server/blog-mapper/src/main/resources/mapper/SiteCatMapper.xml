@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.sangaizhi.blog.dao.SiteCatDao">
+
+    <resultMap id="SiteCatMap" type="org.sangaizhi.blog.entity.vo.SiteCatVO">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="createTime" column="createTime"/>
+        <result property="modifyTime" column="modifyTime"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        	id as id,
+        	name as name,
+        	create_time as createTime,
+        	modify_time as modifyTime
+        ]]>
+    </sql>
+    
+    <sql id="where">
+    	<where>
+           	<if test="@Ognl@isNotEmpty(id)">
+            	<![CDATA[ AND id = #{id} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(name)">
+            	<![CDATA[ AND name = #{name} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(createTime)">
+           		<![CDATA[ AND create_time = #{createTime} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(createTimeBegin)">
+           		<![CDATA[ AND create_time >= #{createTimeBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(createTimeEnd)">
+            	<![CDATA[ AND create_time <= #{createTimeEnd} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTime)">
+           		<![CDATA[ AND modify_time = #{modifyTime} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTimeBegin)">
+           		<![CDATA[ AND modify_time >= #{modifyTimeBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTimeEnd)">
+            	<![CDATA[ AND modify_time <= #{modifyTimeEnd} ]]>
+           	</if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultType="org.sangaizhi.blog.entity.vo.SiteCatVO">
+        SELECT 
+        	<include refid="columns" />
+        FROM
+            t_site_cat
+        <where> 
+            id = #{id} 
+        </where>
+    </select>
+    
+    <select id="getByCondition" resultType="org.sangaizhi.blog.entity.vo.SiteCatVO">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_site_cat 
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryList" resultMap="SiteCatMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_site_cat 
+        <include refid="where"/>
+    </select>
+        
+    <select id="count" resultType="long">
+	    SELECT
+	        count(1)
+	    FROM
+	        t_site_cat
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryPage" resultMap="SiteCatMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_site_cat 
+        <include refid="where"/>
+	    <!-- 请手动在{startPosition}和{pageSize}前面加上"#"号并删除本注释 --> 
+        LIMIT {startPosition},{pageSize}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO t_site_cat (
+	        name,
+	        create_time,
+	        modify_time
+	    ) VALUES (
+	        #{name},
+	        #{createTime},
+	        #{modifyTime}
+	    )
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO t_site_cat (
+            name,
+            create_time,
+            modify_time
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                                #{item.name},
+                #{item.createTime},
+                #{item.modifyTime}
+            )
+        </foreach>
+    </insert>
+    
+    <update id="updateById">
+    	UPDATE
+        	t_site_cat
+    	<set>
+        	<if test="name != null">
+        		<![CDATA[ name = #{name} ]]>,
+        	</if>
+        	<if test="createTime != null">
+        		<![CDATA[ create_time = #{createTime} ]]>,
+        	</if>
+        	<if test="modifyTime != null">
+        		<![CDATA[ modify_time = #{modifyTime} ]]>
+        	</if>
+    	</set>
+    	<where>
+        	id = #{id}
+    	</where>
+    </update>
+    
+    <delete id="deleteById">
+	    DELETE
+	    FROM
+	        t_site_cat
+	    <where>
+	        id = #{id} 
+	    </where>
+    </delete>
+    
+    <delete id="deleteBatchByIds">
+        DELETE 
+        FROM
+            t_site_cat
+        WHERE
+            id IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+#{item}        </foreach>
+    </delete>
+</mapper>
+

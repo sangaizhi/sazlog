@@ -1,0 +1,79 @@
+# 服务配置
+server:
+  # 服务端口号
+  port:  8083
+  # session超时时间（分钟）
+  session:
+    timeout: 120
+  tomcat:
+    max-threads: 800
+    uri-encoding: UTF-8
+  context-path: /blog-admin
+
+management:
+  security:
+    enabled: false
+
+# 日志配置
+logging:
+  level:
+    com.zyunc.edu.dao: debug
+  config: classpath:logback-spring.xml
+
+spring:
+  application:
+    name: edu
+  messages:
+    basename: i18n/messages
+  datasource:
+    name: blog-admin
+    url: jdbc:mysql://rm-bp1l4e28m5s253175fo.mysql.rds.aliyuncs.com:3306/zlog?useUnicode=true&amp;characterEncoding=UTF-8
+    username: root
+    password: sss
+    driver-class-name: com.mysql.jdbc.Driver
+    initial-size: 20
+    max-active: 20
+    min-idle: 1
+    max-wait: 60000
+    pool-prepared-statements: true
+    max-open-prepared-statements: 20
+    validation-query: SELECT 'x' FROM DUAL
+    validation-query-timeout: 60000
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    time-between-eviction-runs-millis: 3000
+    min-evictable-idle-time-millis: 300000
+    filters: stat
+    use-global-data-source-stat: true
+  # 缓存配置
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:ehcache.xml
+  ## 时区配置
+  jackson:
+    time-zone: GMT+8
+  redis:
+    database: 0
+    host: r-wz94fe38a8bd3d64.redis.rds.aliyuncs.com
+    port: 6379
+    password: sss
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+    timeout: 0
+  http:
+      encoding:
+        enabled: true
+        force: true
+        charset: UTF-8
+# mybatis配置
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapperLocations: classpath:mapper/*.xml
+  typeAliasesPackage: org.sangaizhi.blog.entity.vo
+
+## redis 配置

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.sangaizhi.blog.dao.UserDao">
+
+    <resultMap id="UserMap" type="org.sangaizhi.blog.entity.vo.UserVO">
+        <result property="id" column="id"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profile" column="profile"/>
+        <result property="createTime" column="createTime"/>
+        <result property="modifyTime" column="modifyTime"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        	ID as id,
+        	PHONE as phone,
+        	EMAIL as email,
+        	STATUS as status,
+        	NICKNAME as nickname,
+        	PROFILE as profile,
+        	CREATE_TIME as createTime,
+        	MODIFY_TIME as modifyTime
+        ]]>
+    </sql>
+    
+    <sql id="where">
+    	<where>
+           	<if test="@Ognl@isNotEmpty(id)">
+            	<![CDATA[ AND ID = #{id} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(keyword)">
+            	AND (
+                  phone LIKE CONCAT("%", #{keyword} ,"%")
+                  OR
+                  EMAIL LIKE CONCAT("%", #{keyword} ,"%")
+                  OR
+                  NICKNAME LIKE CONCAT("%", #{keyword} ,"%")
+                )
+            </if>
+           	<if test="@Ognl@isNotEmpty(phone)">
+            	<![CDATA[ AND PHONE = #{phone} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(email)">
+            	<![CDATA[ AND EMAIL = #{email} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(status)">
+            	<![CDATA[ AND STATUS = #{status} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(nickname)">
+            	<![CDATA[ AND NICKNAME = #{nickname} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(profile)">
+            	<![CDATA[ AND PROFILE = #{profile} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(createTime)">
+           		<![CDATA[ AND CREATE_TIME = #{createTime} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(createTimeBegin)">
+           		<![CDATA[ AND CREATE_TIME >= #{createTimeBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(createTimeEnd)">
+            	<![CDATA[ AND CREATE_TIME <= #{createTimeEnd} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTime)">
+           		<![CDATA[ AND MODIFY_TIME = #{modifyTime} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTimeBegin)">
+           		<![CDATA[ AND MODIFY_TIME >= #{modifyTimeBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTimeEnd)">
+            	<![CDATA[ AND MODIFY_TIME <= #{modifyTimeEnd} ]]>
+           	</if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultType="org.sangaizhi.blog.entity.vo.UserVO">
+        SELECT 
+        	<include refid="columns" />
+        FROM
+            t_user
+        <where> 
+            ID = #{id} 
+        </where>
+    </select>
+    
+    <select id="getByCondition" resultType="org.sangaizhi.blog.entity.vo.UserVO">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_user 
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryList" resultMap="UserMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_user 
+        <include refid="where"/>
+    </select>
+        
+    <select id="count" resultType="long">
+	    SELECT
+	        count(1)
+	    FROM
+	        t_user
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryPage" resultMap="UserMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_user 
+        <include refid="where"/>
+	    <!-- 请手动在{startPosition}和{pageSize}前面加上"#"号并删除本注释 --> 
+        LIMIT #{startPosition},#{pageSize}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO t_user (
+	        PHONE,
+	        EMAIL,
+	        STATUS,
+	        NICKNAME,
+	        PROFILE,
+	        CREATE_TIME,
+	        MODIFY_TIME
+	    ) VALUES (
+	        #{phone},
+	        #{email},
+	        #{status},
+	        #{nickname},
+	        #{profile},
+	        #{createTime},
+	        #{modifyTime}
+	    )
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO t_user (
+            PHONE,
+            EMAIL,
+        STATUS,
+            NICKNAME,
+            PROFILE,
+            CREATE_TIME,
+            MODIFY_TIME
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.phone},
+                #{item.email},
+                #{item.status},
+                #{item.nickname},
+                #{item.profile},
+                #{item.createTime},
+                #{item.modifyTime}
+            )
+        </foreach>
+    </insert>
+    
+    <update id="updateById">
+    	UPDATE
+        	t_user
+    	<set>
+        	<if test="phone != null">
+        		<![CDATA[ PHONE = #{phone} ]]>,
+        	</if>
+        	<if test="email != null">
+        		<![CDATA[ EMAIL = #{email} ]]>,
+        	</if>
+        	<if test="status != null">
+        		<![CDATA[ STATUS = #{status} ]]>,
+        	</if>
+        	<if test="nickname != null">
+        		<![CDATA[ NICKNAME = #{nickname} ]]>,
+        	</if>
+        	<if test="profile != null">
+        		<![CDATA[ PROFILE = #{profile} ]]>,
+        	</if>
+        	<if test="createTime != null">
+        		<![CDATA[ CREATE_TIME = #{createTime} ]]>,
+        	</if>
+        	<if test="modifyTime != null">
+        		<![CDATA[ MODIFY_TIME = #{modifyTime} ]]>
+        	</if>
+    	</set>
+    	<where>
+        	ID = #{id}
+    	</where>
+    </update>
+    
+    <delete id="deleteById">
+	    DELETE
+	    FROM
+	        t_user
+	    <where>
+	        ID = #{id} 
+	    </where>
+    </delete>
+    
+    <delete id="deleteBatchByIds">
+        DELETE 
+        FROM
+            t_user
+        WHERE
+            ID IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+#{item}        </foreach>
+    </delete>
+
+    <select id="getUserByAccountAndPassword" resultType="org.sangaizhi.blog.entity.vo.UserVO">
+        SELECT
+        <include refid="columns" />
+        FROM
+        t_user
+        <where>
+            (phone = #{account} or email = #{account}) and password = #{password}
+            LIMIT 0,1
+        </where>
+    </select>
+</mapper>
+

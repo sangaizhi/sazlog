@@ -1,0 +1,71 @@
+::-webkit-scrollbar {
+    right: -5px;
+    width: 8px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: #eeeeee; /*底色 */
+    -webkit-border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+    height: 5px;
+    background-color: #ccc; /* 滚动部分的颜色 */
+    -webkit-border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    width: 8px;
+    background-color: #ccc; /* 滚动部分的颜色 */
+    -webkit-border-radius: 6px;
+}
+html, body,ul,li,p{
+	margin: 0;
+	padding: 0;
+}
+html, body{
+	background-color: #f0f3f4;
+	overflow: hidden;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0;
+}
+a{
+	color: #42b983;
+	text-decoration: none;
+}
+.bg-success{
+	background-color: #13CE66;
+}
+.bg-warn{
+	background-color: #F7BA2A;
+}
+.bg-danger{
+	background-color: #FF4949;
+}
+.hide{
+	display: none !important;
+}
+.clear{
+	clear:both;
+}
+.container{
+	position: absolute;
+	height: -moz-calc(100% - 50px);
+	height: -webkit-calc(100% - 50px);
+	height: calc(100% - 50px);
+	width: -moz-calc(100% - 200px);
+	width: -webkit-calc(100% - 200px);
+	width: calc(100% - 200px);
+	left: 200px;
+	top:50px;
+	bottom: 0;
+	right: 0;
+	background-color: #f0f3f4;
+}

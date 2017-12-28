@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.sangaizhi.blog.dao.UserExtraDao">
+
+    <resultMap id="UserExtraMap" type="org.sangaizhi.blog.entity.vo.UserExtraVO">
+        <result property="id" column="id"/>
+        <result property="sex" column="sex"/>
+        <result property="birth" column="birth"/>
+        <result property="address" column="address"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        	ID as id,
+        	SEX as sex,
+        	BIRTH as birth,
+        	ADDRESS as address
+        ]]>
+    </sql>
+    
+    <sql id="where">
+    	<where>
+           	<if test="@Ognl@isNotEmpty(id)">
+            	<![CDATA[ AND ID = #{id} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(sex)">
+            	<![CDATA[ AND SEX = #{sex} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(birth)">
+           		<![CDATA[ AND BIRTH = #{birth} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(birthBegin)">
+           		<![CDATA[ AND BIRTH >= #{birthBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(birthEnd)">
+            	<![CDATA[ AND BIRTH <= #{birthEnd} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(address)">
+            	<![CDATA[ AND ADDRESS = #{address} ]]>
+            </if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultType="org.sangaizhi.blog.entity.vo.UserExtraVO">
+        SELECT 
+        	<include refid="columns" />
+        FROM
+            t_user_extra
+        <where> 
+            ID = #{id} 
+        </where>
+    </select>
+    
+    <select id="getByCondition" resultType="org.sangaizhi.blog.entity.vo.UserExtraVO">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_user_extra 
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryList" resultMap="UserExtraMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_user_extra 
+        <include refid="where"/>
+    </select>
+        
+    <select id="count" resultType="long">
+	    SELECT
+	        count(1)
+	    FROM
+	        t_user_extra
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryPage" resultMap="UserExtraMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_user_extra 
+        <include refid="where"/>
+	    <!-- 请手动在{startPosition}和{pageSize}前面加上"#"号并删除本注释 --> 
+        LIMIT #{startPosition},#{pageSize}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO t_user_extra (
+	        SEX,
+	        BIRTH,
+	        ADDRESS
+	    ) VALUES (
+	        #{sex},
+	        #{birth},
+	        #{address}
+	    )
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO t_user_extra (
+            SEX,
+            BIRTH,
+            ADDRESS
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                                #{item.sex},
+                #{item.birth},
+                #{item.address}
+            )
+        </foreach>
+    </insert>
+    
+    <update id="updateById">
+    	UPDATE
+        	t_user_extra
+    	<set>
+        	<if test="sex != null">
+        		<![CDATA[ SEX = #{sex} ]]>,
+        	</if>
+        	<if test="birth != null">
+        		<![CDATA[ BIRTH = #{birth} ]]>,
+        	</if>
+        	<if test="address != null">
+        		<![CDATA[ ADDRESS = #{address} ]]>
+        	</if>
+    	</set>
+    	<where>
+        	ID = #{id}
+    	</where>
+    </update>
+    
+    <delete id="deleteById">
+	    DELETE
+	    FROM
+	        t_user_extra
+	    <where>
+	        ID = #{id} 
+	    </where>
+    </delete>
+    
+    <delete id="deleteBatchByIds">
+        DELETE 
+        FROM
+            t_user_extra
+        WHERE
+            ID IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+#{item}        </foreach>
+    </delete>
+</mapper>
+

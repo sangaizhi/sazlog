@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.sangaizhi.blog.dao.ReplyDao">
+
+    <resultMap id="ReplyMap" type="org.sangaizhi.blog.entity.vo.ReplyVO">
+        <result property="id" column="id"/>
+        <result property="commentId" column="commentId"/>
+        <result property="content" column="content"/>
+        <result property="createTime" column="createTime"/>
+        <result property="modifyTime" column="modifyTime"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        	ID as id,
+        	COMMENT_ID as commentId,
+        	CONTENT as content,
+        	CREATE_TIME as createTime,
+        	MODIFY_TIME as modifyTime
+        ]]>
+    </sql>
+    
+    <sql id="where">
+    	<where>
+           	<if test="@Ognl@isNotEmpty(id)">
+            	<![CDATA[ AND ID = #{id} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(commentId)">
+            	<![CDATA[ AND COMMENT_ID = #{commentId} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(content)">
+            	<![CDATA[ AND CONTENT = #{content} ]]>
+            </if>
+           	<if test="@Ognl@isNotEmpty(createTime)">
+           		<![CDATA[ AND CREATE_TIME = #{createTime} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(createTimeBegin)">
+           		<![CDATA[ AND CREATE_TIME >= #{createTimeBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(createTimeEnd)">
+            	<![CDATA[ AND CREATE_TIME <= #{createTimeEnd} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTime)">
+           		<![CDATA[ AND MODIFY_TIME = #{modifyTime} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTimeBegin)">
+           		<![CDATA[ AND MODIFY_TIME >= #{modifyTimeBegin} ]]>
+           	</if>
+           	<if test="@Ognl@isNotEmpty(modifyTimeEnd)">
+            	<![CDATA[ AND MODIFY_TIME <= #{modifyTimeEnd} ]]>
+           	</if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultType="org.sangaizhi.blog.entity.vo.ReplyVO">
+        SELECT 
+        	<include refid="columns" />
+        FROM
+            t_reply
+        <where> 
+            ID = #{id} 
+        </where>
+    </select>
+    
+    <select id="getByCondition" resultType="org.sangaizhi.blog.entity.vo.ReplyVO">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_reply 
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryList" resultMap="ReplyMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_reply 
+        <include refid="where"/>
+    </select>
+        
+    <select id="count" resultType="long">
+	    SELECT
+	        count(1)
+	    FROM
+	        t_reply
+        <include refid="where"/>
+    </select>
+    
+    <select id="queryPage" resultMap="ReplyMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            t_reply 
+        <include refid="where"/>
+	    <!-- 请手动在{startPosition}和{pageSize}前面加上"#"号并删除本注释 --> 
+        LIMIT #{startPosition},#{pageSize}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO t_reply (
+	        COMMENT_ID,
+	        CONTENT,
+	        CREATE_TIME,
+	        MODIFY_TIME
+	    ) VALUES (
+	        #{commentId},
+	        #{content},
+	        #{createTime},
+	        #{modifyTime}
+	    )
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO t_reply (
+            COMMENT_ID,
+            CONTENT,
+            CREATE_TIME,
+            MODIFY_TIME
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                                #{item.commentId},
+                #{item.content},
+                #{item.createTime},
+                #{item.modifyTime}
+            )
+        </foreach>
+    </insert>
+    
+    <update id="updateById">
+    	UPDATE
+        	t_reply
+    	<set>
+        	<if test="commentId != null">
+        		<![CDATA[ COMMENT_ID = #{commentId} ]]>,
+        	</if>
+        	<if test="content != null">
+        		<![CDATA[ CONTENT = #{content} ]]>,
+        	</if>
+        	<if test="createTime != null">
+        		<![CDATA[ CREATE_TIME = #{createTime} ]]>,
+        	</if>
+        	<if test="modifyTime != null">
+        		<![CDATA[ MODIFY_TIME = #{modifyTime} ]]>
+        	</if>
+    	</set>
+    	<where>
+        	ID = #{id}
+    	</where>
+    </update>
+    
+    <delete id="deleteById">
+	    DELETE
+	    FROM
+	        t_reply
+	    <where>
+	        ID = #{id} 
+	    </where>
+    </delete>
+    
+    <delete id="deleteBatchByIds">
+        DELETE 
+        FROM
+            t_reply
+        WHERE
+            ID IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+#{item}        </foreach>
+    </delete>
+</mapper>
+
