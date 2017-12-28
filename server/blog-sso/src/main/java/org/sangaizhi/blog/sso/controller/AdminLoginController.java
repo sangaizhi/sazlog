@@ -36,8 +36,6 @@ public class AdminLoginController {
             return ResponseResult.fail("账号或密码不能为空");
         }
         ResponseResult responseResult =  adminLoginService.login(account, password);
-        String token = (String) responseResult.getData();
-        CookieUtils.setCookie(request, response, SystemConstant.ADMIN_TOKEN_COOKIE_KEY, token);
         return responseResult;
     }
 
@@ -52,7 +50,7 @@ public class AdminLoginController {
 
     @RequestMapping(value = "/getAdminByToken", produces = {"application/json;charset=utf8"})
     @ResponseBody
-    public ResponseResult getAdminByToken(@RequestParam String token){
+    public ResponseResult getAdminByToken(@RequestParam String token,HttpServletRequest request){
         AdminVO admin = ssoAdminService.getByToken(token);
         if(null == admin){
             return ResponseResult.fail("获取管理员信息失败");

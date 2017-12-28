@@ -50,8 +50,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         //在Handler执行之前处理
         //判断用户是否登录
         //从cookie中取token
-        String token = CookieUtils.getCookieValue(request, SystemConstant.ADMIN_TOKEN_COOKIE_KEY);
-        System.out.println(token);
+        String token = request.getHeader("Authorization");
         if(StringUtils.isBlank(token)){
             ResponseResult responseResult = ResponseResult.fail("未登录");
             response.setHeader("Content-type", "application/json;charset=UTF-8");
@@ -60,9 +59,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         //根据token换取用户信息，调用sso系统的接口。
-        System.out.println(token);
         AdminVO admin = redisCache.getCache(token, AdminVO.class);
-        System.out.println("admin:"+admin);
         //取不到用户信息
         if (null == admin) {
             //跳转到登录页面，把用户请求的url作为参数传递给登录页面。

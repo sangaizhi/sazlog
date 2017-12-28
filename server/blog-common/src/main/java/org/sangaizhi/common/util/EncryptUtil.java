@@ -24,7 +24,4 @@ public class EncryptUtil {
         return result;
     }
 
-    public static void main(String[] args) {
-        System.out.println(md5Hex("123456", 2));
-    }
 }

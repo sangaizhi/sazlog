@@ -1,7 +1,7 @@
 # 服务配置
 server:
   # 服务端口号
-  port:  8082
+  port:  9001
   # session超时时间（分钟）
   session:
     timeout: 120
